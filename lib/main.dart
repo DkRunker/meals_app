@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import './categories_screen.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -16,8 +18,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-  final String title;
+  MyHomePage();
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -32,7 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text("DeliMeals"),
       ),
       body: Center(
-        child: Text("Navigation Time!"),
+        child: CategoriesScreen(),
       ),
     );
   }
