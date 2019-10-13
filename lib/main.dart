@@ -24,27 +24,48 @@ class _MyAppState extends State<MyApp> {
     'vegan': false,
   };
   List<Meal> _availableMeals = DUMMY_MEALS;
+  List<Meal> _favortieMeals = [];
 
   void _setFilters(Map<String, bool> filterData) {
     setState(() {
-     _filters = filterData;
-     
-     _availableMeals = DUMMY_MEALS.where((meal) {
-       if (_filters['gluten'] && !meal.isGlutenFree) {
-         return false;
-       }
-       if (_filters['lactose'] && !meal.isLactoseFree) {
-         return false;
-       }
-       if (_filters['vegetarian'] && !meal.isVegetarian) {
-         return false;
-       }
-       if (_filters['vegan'] && !meal.isVegan) {
-         return false;
-       }
-       return true;
-     }).toList();
+      _filters = filterData;
+
+      _availableMeals = DUMMY_MEALS.where((meal) {
+        if (_filters['gluten'] && !meal.isGlutenFree) {
+          return false;
+        }
+        if (_filters['lactose'] && !meal.isLactoseFree) {
+          return false;
+        }
+        if (_filters['vegetarian'] && !meal.isVegetarian) {
+          return false;
+        }
+        if (_filters['vegan'] && !meal.isVegan) {
+          return false;
+        }
+        return true;
+      }).toList();
     });
+  }
+
+  void _toggleFavorite(String mealId) {
+    final existingIndex =
+        _favortieMeals.indexWhere((meal) => meal.id == mealId);
+    if (existingIndex >= 0) {
+      setState(() {
+        _favortieMeals.removeAt(existingIndex);
+      });
+    } else {
+      setState(() {
+        _favortieMeals.add(
+          DUMMY_MEALS.firstWhere((meal) => meal.id == mealId),
+        );
+      });
+    }
+  }
+
+  bool _isMealFavorite(String id) {
+    return _favortieMeals.any((meal) => meal.id == id);
   }
 
   @override
@@ -72,10 +93,10 @@ class _MyAppState extends State<MyApp> {
       ),
       //home: MyHomePage(),
       routes: {
-        '/' : (ctx) => TabsScreen(),
-        CategoryMealsScreen.routeName : (ctx) => CategoryMealsScreen(_availableMeals,),
-        MealDetailScreen.routeName : (ctx) => MealDetailScreen(),
-        FiltersScreen.routeName : (ctx) => FiltersScreen(_filters, _setFilters), 
+        '/': (ctx) => TabsScreen(_favortieMeals),
+        CategoryMealsScreen.routeName: (ctx) => CategoryMealsScreen(_availableMeals),
+        MealDetailScreen.routeName: (ctx) => MealDetailScreen(_toggleFavorite, _isMealFavorite),
+        FiltersScreen.routeName: (ctx) => FiltersScreen(_filters, _setFilters),
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(builder: (ctx) => MyHomePage());
